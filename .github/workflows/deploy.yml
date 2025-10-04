@@ -14,24 +14,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Login to Azure
-      uses: azure/login@v1
+    - name: Azure Login
+      uses: Azure/login@v2.3.0
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: 75fc63d5-847c-4983-866d-25466b1eaa1d
+        tenant-id: 3f0f658d-adb1-4332-a066-75915f54a811
+        subscription-id: 885be1e7-1990-4e52-a221-841382209984
     
-    - name: Setup Python
-      uses: actions/setup-python@v4
+    - name: Azure WebApp
+      uses: Azure/webapps-deploy@v2.2.17
       with:
-        python-version: '3.9'
-    
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-    
-    - name: Deploy to Azure Functions
-      uses: Azure/functions-action@v1
-      with:
-        app-name: ${{ secrets.AZURE_FUNCTION_APP_NAME }}
+        app-name: anderson-test-10
         package: .
+        startup-command: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
