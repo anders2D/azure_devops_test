@@ -1,0 +1,36 @@
+name: Threat Model Analysis
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  threat-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install pytm
+      run: pip install pytm
+    
+    - name: Run Threat Analysis
+      run: |
+        if [ -f "*.tm7" ]; then
+          echo "Found .tm7 file - manual analysis required"
+          echo "# Threat Model Analysis Report" > threat-report.md
+          echo "TM7 file detected: $(ls *.tm7)" >> threat-report.md
+        else
+          pytm --report --dfd | tee threat-report.md
+        fi
+    
+    - name: Upload Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: threat-analysis-report
+        path: threat-report.md
